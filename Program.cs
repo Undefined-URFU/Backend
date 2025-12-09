@@ -64,6 +64,17 @@ builder.Services
         };
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
+
 var connectionString = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(connectionString).UseLazyLoadingProxies());
 
@@ -81,5 +92,11 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.MapControllers();
+
+app.UseCors(builder => builder
+    .AllowAnyOrigin()
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+);
 
 await app.RunAsync();
