@@ -1,6 +1,10 @@
 using CosmeticsRecommendationSystem.Api.Abstractions;
 using CosmeticsRecommendationSystem.Api.Services;
+using CosmeticsRecommendationSystem.Database;
+using CosmeticsRecommendationSystem.Database.Repositories;
+using CosmeticsRecommendationSystem.Database.Repositories.Abstractions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -31,7 +35,12 @@ builder.Services
         };
     });
 
+var connectionString = builder.Configuration.GetConnectionString("Default");
+builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(connectionString).UseLazyLoadingProxies());
+
 builder.Services.AddTransient<IJwtService, JwtService>();
+
+builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
