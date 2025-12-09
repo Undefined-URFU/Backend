@@ -5,7 +5,7 @@ namespace CosmeticsRecommendationSystem.Database.Models;
 [Index(nameof(Email))]
 public class User
 {
-    public required Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.NewGuid();
     public required string Email { get; set; }
     public required string HashedPassword { get; set; }
 }

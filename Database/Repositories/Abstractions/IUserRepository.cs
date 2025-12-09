@@ -6,4 +6,5 @@ public interface IUserRepository
 {
     public Task<User?> GetUserByIdAsync(Guid id);
     public Task<User?> GetUserByEmailAsync(string email);
+    public Task<Guid> CreateUserAsync(User user);
 }

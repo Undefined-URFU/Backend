@@ -6,6 +6,13 @@ namespace CosmeticsRecommendationSystem.Database.Repositories;
 
 public class UserRepository(DatabaseContext database) : IUserRepository
 {
+    public async Task<Guid> CreateUserAsync(User user)
+    {
+        database.Users.Add(user);
+        await database.SaveChangesAsync();
+        return user.Id;
+    }
+
     public async Task<User?> GetUserByEmailAsync(string email)
     {
         return await database.Users.FirstOrDefaultAsync(x => x.Email == email);
