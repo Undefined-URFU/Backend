@@ -81,6 +81,10 @@ builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(conn
 builder.Services.AddTransient<IJwtService, JwtService>();
 
 builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IProductRepository, ProductRepository>();
+builder.Services.AddTransient<IUserPreferencesRepository, UserPreferencesRepository>();
+builder.Services.AddTransient<IProductInteractionRepository, ProductInteractionRepository>();
+builder.Services.AddTransient<IReviewRepository, ReviewRepository>();
 
 var app = builder.Build();
 

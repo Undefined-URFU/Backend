@@ -31,11 +31,8 @@ public class AuthController(IJwtService jwtService, IUserRepository userReposito
     [Route("login")]
     public async Task<TokenDto> Login([FromBody] AuthRequestDto request)
     {
-        var user = await userRepository.GetUserByEmailAsync(request.Email);
-        if (user is null)
-        {
-            throw new BadHttpRequestException("Пользователя с таким email не существует");
-        }
+        var user = await userRepository.GetUserByEmailAsync(request.Email) 
+            ?? throw new BadHttpRequestException("Пользователя с таким email не существует", 404);
 
         if (_passwordHasher.VerifyHashedPassword(user, user.HashedPassword, request.Password) is PasswordVerificationResult.Failed)
         {
