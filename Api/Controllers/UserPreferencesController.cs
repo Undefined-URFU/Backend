@@ -2,6 +2,7 @@ using CosmeticsRecommendationSystem.Api.Dtos;
 using CosmeticsRecommendationSystem.Database.Enums;
 using CosmeticsRecommendationSystem.Database.Models;
 using CosmeticsRecommendationSystem.Database.Repositories.Abstractions;
+using CosmeticsRecommendationSystem.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,7 +33,12 @@ public class UserPreferencesController(IUserPreferencesRepository preferencesRep
         var userId = Guid.Parse(User.FindFirst("userId")!.Value);
         var user = await userRepository.GetUserByIdAsync(userId) ?? throw new BadHttpRequestException("Пользователь не найден", 404);
 
-        if (!Enum.TryParse<SkinTypeEnum>(request.SkinType, out var skinType))
+        SkinTypeEnum skinType;
+        try
+        {
+            skinType = EnumHelper.Parse<SkinTypeEnum>(request.SkinType);
+        }
+        catch
         {
             throw new BadHttpRequestException("Отправлен неправильный тип кожи");
         }

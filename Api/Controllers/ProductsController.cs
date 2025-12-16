@@ -34,7 +34,7 @@ public class ProductsController(
             p.Price,
             p.Highlights,
             p.PrimaryCategory
-        ))];
+        )).Take(100)];
     }
 
     [HttpGet("recommended")]
@@ -112,8 +112,8 @@ public class ProductsController(
         await interactionRepository.CreateInteractionAsync(interaction);
 
         // Костыль: Добавляем в Reviews (как положительный отзыв, напр. rating=5, is_recommended=true)
-        // Предполагаем skin_type из prefs, но если нет - default или error
-        var prefs = await GetUserPreferencesForUser(userId);  // Нужно реализовать helper или инжект репо
+        // Предполагаем skin_type из prefs, но если нет - default
+        var prefs = user.UserPreferences;  // Нужно реализовать helper или инжект репо
         var skinType = prefs?.SkinType ?? SkinTypeEnum.Normal;  // Default
 
         var review = new Review
@@ -129,13 +129,5 @@ public class ProductsController(
         await reviewRepository.CreateReviewAsync(review);
 
         // TODO: Позже - вызвать ML add_review для обновления модели
-    }
-
-    // Helper: Нужно добавить в репо или контроллер
-    private async Task<UserPreferences?> GetUserPreferencesForUser(Guid userId)
-    {
-        // Инжект IUserPreferencesRepository и вызов
-        // Пока заглушка, реализуй в репо
-        return null;  // Замени
     }
 }
