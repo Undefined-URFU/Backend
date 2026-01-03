@@ -12,6 +12,22 @@ public class ProductInteractionRepository(DatabaseContext database) : IProductIn
         await database.SaveChangesAsync();
     }
 
+    public async Task<List<Product>> GetAllBoughtProductsAsync(Guid userId)
+    {
+        return await database.ProductInteractions
+            .Where(x => x.UserId == userId && x.InteractionType == Enums.InteractionTypeEnum.Like)
+            .Select(x => x.Product)
+            .ToListAsync();
+    }
+
+    public async Task<List<Product>> GetAllLikedProductsAsync(Guid userId)
+    {
+        return await database.ProductInteractions
+            .Where(x => x.UserId == userId && x.InteractionType == Enums.InteractionTypeEnum.Bought)
+            .Select(x => x.Product)
+            .ToListAsync();
+    }
+
     public async Task<ProductInteraction?> GetInteractionByUserAndProductAsync(Guid userId, Guid productId)
     {
         return await database.ProductInteractions.FirstOrDefaultAsync(pi => pi.UserId == userId && pi.ProductId == productId);

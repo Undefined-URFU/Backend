@@ -19,9 +19,43 @@ public class ProductsController(
 ) : ControllerBase
 {
     [HttpGet]
-    public async Task<List<ProductDto>> GetProducts()
+    public async Task<List<ProductDto>> GetProducts(
+        [FromQuery] string? search,
+        [FromQuery] bool? liked,
+        [FromQuery] bool? bought,
+        [FromQuery] string? primaryCategory)
     {
+        var userId = Guid.Parse(User.FindFirst("userId")!.Value);
+        var user = await userRepository.GetUserByIdAsync(userId)
+            ?? throw new BadHttpRequestException("Пользователь не найден", 404);
+
         var products = await productRepository.GetAllProductsAsync();
+
+        if (liked is true && bought is true)
+        {
+            var likedProducts = await interactionRepository.GetAllLikedProductsAsync(userId);
+            var boughtProducts = await interactionRepository.GetAllBoughtProductsAsync(userId);
+            products = [.. likedProducts.Intersect(boughtProducts)];
+        }
+        else if (liked is true && bought is not true)
+        {
+            products = await interactionRepository.GetAllLikedProductsAsync(userId);
+        }
+        else if (bought is true && liked is not true)
+        {
+            products = await interactionRepository.GetAllBoughtProductsAsync(userId);
+        }
+
+        if (!string.IsNullOrEmpty(search))
+        {
+            products = [.. products.Where(x => x.ProductName.Contains(search, StringComparison.CurrentCultureIgnoreCase))];
+        }
+
+        if (!string.IsNullOrEmpty(primaryCategory))
+        {
+            products = [.. products.Where(x => x.PrimaryCategory.Contains(primaryCategory, StringComparison.CurrentCultureIgnoreCase))];
+        }
+
         return [.. products.Select(p => new ProductDto(
             p.Id.ToString(),
             p.ProductId,
