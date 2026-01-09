@@ -24,4 +24,13 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Database/Sql/ProductsFillment.sql"/>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Database/Sql/ProductsFillment.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>
